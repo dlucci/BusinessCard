@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -18,7 +20,7 @@ public class CardActivity extends Activity implements OnClickListener {
     private EditText firstName, lastName, email, phoneNumber;
     private Button start, stop;
 
-    private static String fName, lName, pEmail, pNumber;
+    private static String fName, lName, pEmail, pNumber, emailSubject, messageBody;
 
     private static Notification.Builder builder;
     private static NotificationManager notification;
@@ -41,13 +43,7 @@ public class CardActivity extends Activity implements OnClickListener {
         start.setOnClickListener(this);
         stop.setOnClickListener(this);
 
-        builder = new Notification.Builder(this).setSmallIcon(R.drawable.ic_launcher)
-                .setContentTitle("Business Card")
-                .setContentText("Send information")
-                .addAction(R.drawable.ic_launcher, "Text", pIntent)
-                .addAction(R.drawable.ic_launcher, "Email", pIntent)
-                .setOngoing(true);
-        notification = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        emailSubject = "We met at the conference";
 
     }
 
@@ -79,9 +75,32 @@ public class CardActivity extends Activity implements OnClickListener {
             lName = lastName.getText().toString();
             pEmail = email.getText().toString();
             pNumber = phoneNumber.getText().toString();
+
+            messageBody = "My name is " + fName + " " + lName + ".  My phone number is " + pNumber + " and my email is " + pEmail;
+
+            Intent email = new Intent(Intent.ACTION_SENDTO);
+            email.putExtra(Intent.EXTRA_SUBJECT, emailSubject);
+            email.putExtra(Intent.EXTRA_TEXT, messageBody);
+
+            PendingIntent eIntent = PendingIntent.getActivity(this, 0, email, PendingIntent.FLAG_UPDATE_CURRENT);
+
+            Intent sms = new Intent(Intent.ACTION_SENDTO, Uri.parse("smsto:"));
+            sms.putExtra("sms_body", messageBody);
+
+            PendingIntent tIntent = PendingIntent.getActivity(this, 0, sms, PendingIntent.FLAG_UPDATE_CURRENT);
+
+            builder = new Notification.Builder(this).setSmallIcon(R.drawable.ic_launcher)
+                    .setContentTitle("Business Card")
+                    .setContentText("Send information")
+                    .addAction(R.drawable.ic_launcher, "Text", tIntent)
+                    .addAction(R.drawable.ic_launcher, "Email", eIntent)
+                    .setOngoing(true);
+            notification = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
             notification.notify(1, builder.build());
         } else if(id == stop.getId()){
-            notification.cancel(1);
+            if(notification != null)
+                notification.cancel(1);
         }
 
     }
