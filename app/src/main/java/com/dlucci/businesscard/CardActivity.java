@@ -78,11 +78,13 @@ public class CardActivity extends Activity implements OnClickListener {
 
             messageBody = "My name is " + fName + " " + lName + ".  My phone number is " + pNumber + " and my email is " + pEmail;
 
-            Intent email = new Intent(Intent.ACTION_SENDTO);
+            Intent email = new Intent(Intent.ACTION_SEND);
+            email.setType("plain/text");
+            //email.putExtra(Intent.EXTRA_EMAIL, new String[]{"a@gmail.com"});
             email.putExtra(Intent.EXTRA_SUBJECT, emailSubject);
             email.putExtra(Intent.EXTRA_TEXT, messageBody);
 
-            PendingIntent eIntent = PendingIntent.getActivity(this, 0, email, PendingIntent.FLAG_UPDATE_CURRENT);
+            PendingIntent eIntent = PendingIntent.getActivity(this, 0, Intent.createChooser(email, "Sending email"), PendingIntent.FLAG_UPDATE_CURRENT);
 
             Intent sms = new Intent(Intent.ACTION_SENDTO, Uri.parse("smsto:"));
             sms.putExtra("sms_body", messageBody);
@@ -104,6 +106,4 @@ public class CardActivity extends Activity implements OnClickListener {
         }
 
     }
-
-    //private class
 }
