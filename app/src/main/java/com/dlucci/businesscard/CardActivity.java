@@ -7,10 +7,6 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -18,14 +14,16 @@ import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectViews;
+import butterknife.OnClick;
 
 
-public class CardActivity extends Activity implements OnClickListener {
+public class CardActivity extends Activity {
 
     @InjectViews({R.id.firstName, R.id.lastName, R.id.phoneNumber, R.id.email})
     List<EditText> views;
 
-    private Button start, stop;
+    @InjectViews({R.id.start, R.id.stop})
+    List<Button> notifyButtons;
 
     private static String fName, lName, pEmail, pNumber, emailSubject, messageBody;
 
@@ -43,12 +41,6 @@ public class CardActivity extends Activity implements OnClickListener {
         ButterKnife.inject(this);
 
         setFields();
-
-        start = (Button)findViewById(R.id.start);
-        stop = (Button) findViewById(R.id.stop);
-
-        start.setOnClickListener(this);
-        stop.setOnClickListener(this);
 
         emailSubject = "We met at the conference";
 
@@ -81,10 +73,9 @@ public class CardActivity extends Activity implements OnClickListener {
 //        return super.onOptionsItemSelected(item);
 //    }
 
-    @Override
-    public void onClick(View v) {
-        int id = v.getId();
-        if(id == start.getId() && !notified){
+    @OnClick({R.id.start, R.id.stop})
+    public void click() {
+        if(!notified){
             fName = views.get(0).getText().toString();
             lName = views.get(1).getText().toString();
             pNumber = views.get(2).getText().toString();
@@ -118,7 +109,7 @@ public class CardActivity extends Activity implements OnClickListener {
 
             notification.notify(1, builder.build());
             notified = true;
-        } else if(id == stop.getId() && notified){
+        } else if(notified){
             if(notification != null) {
                 notification.cancel(1);
                 notified = false;
