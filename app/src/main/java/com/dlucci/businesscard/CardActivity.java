@@ -14,10 +14,17 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 
+import java.util.List;
+
+import butterknife.ButterKnife;
+import butterknife.InjectViews;
+
 
 public class CardActivity extends Activity implements OnClickListener {
 
-    private EditText firstName, lastName, email, phoneNumber;
+    @InjectViews({R.id.firstName, R.id.lastName, R.id.phoneNumber, R.id.email})
+    List<EditText> views;
+
     private Button start, stop;
 
     private static String fName, lName, pEmail, pNumber, emailSubject, messageBody;
@@ -33,11 +40,7 @@ public class CardActivity extends Activity implements OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_card);
-
-        firstName = (EditText) findViewById(R.id.firstName);
-        lastName = (EditText) findViewById(R.id.lastName);
-        email = (EditText) findViewById(R.id.email);
-        phoneNumber = (EditText) findViewById(R.id.phoneNumber);
+        ButterKnife.inject(this);
 
         setFields();
 
@@ -52,12 +55,11 @@ public class CardActivity extends Activity implements OnClickListener {
     }
 
     private void setFields() {
-        firstName.setText(fName);
-        lastName.setText(lName);
-        email.setText(pEmail);
-        phoneNumber.setText(pNumber);
-
-    }
+        views.get(0).setText(fName);
+        views.get(1).setText(lName);
+        views.get(2).setText(pNumber);
+        views.get(3).setText(pEmail);
+     }
 
 
 //    @Override
@@ -83,10 +85,10 @@ public class CardActivity extends Activity implements OnClickListener {
     public void onClick(View v) {
         int id = v.getId();
         if(id == start.getId() && !notified){
-            fName = firstName.getText().toString();
-            lName = lastName.getText().toString();
-            pEmail = email.getText().toString();
-            pNumber = phoneNumber.getText().toString();
+            fName = views.get(0).getText().toString();
+            lName = views.get(1).getText().toString();
+            pNumber = views.get(2).getText().toString();
+            pEmail = views.get(3).getText().toString();
 
             messageBody = "My name is " + fName + " " + lName + ".  My phone number is " + pNumber + " and my email is " + pEmail;
 
