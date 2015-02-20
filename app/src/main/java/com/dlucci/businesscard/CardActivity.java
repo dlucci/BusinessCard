@@ -94,8 +94,8 @@ public class CardActivity extends Activity implements OnClickListener {
             builder = new Notification.Builder(this).setSmallIcon(R.drawable.ic_launcher)
                     .setContentTitle("Business Card")
                     .setContentText("Send information")
-                    .addAction(R.drawable.ic_launcher, "Text", tIntent)
-                    .addAction(R.drawable.ic_launcher, "Email", eIntent)
+                    .addAction(R.drawable.ic_action_chat, "Text", tIntent)
+                    .addAction(R.drawable.ic_action_email, "Email", eIntent)
                     .setOngoing(true);
             notification = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
