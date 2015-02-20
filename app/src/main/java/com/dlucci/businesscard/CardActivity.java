@@ -27,6 +27,8 @@ public class CardActivity extends Activity implements OnClickListener {
 
     private static PendingIntent pIntent;
 
+    private static boolean notified = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,6 +38,8 @@ public class CardActivity extends Activity implements OnClickListener {
         lastName = (EditText) findViewById(R.id.lastName);
         email = (EditText) findViewById(R.id.email);
         phoneNumber = (EditText) findViewById(R.id.phoneNumber);
+
+        setFields();
 
         start = (Button)findViewById(R.id.start);
         stop = (Button) findViewById(R.id.stop);
@@ -47,30 +51,38 @@ public class CardActivity extends Activity implements OnClickListener {
 
     }
 
+    private void setFields() {
+        firstName.setText(fName);
+        lastName.setText(lName);
+        email.setText(pEmail);
+        phoneNumber.setText(pNumber);
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.card, menu);
-        return true;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
+
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        // Inflate the menu; this adds items to the action bar if it is present.
+//        getMenuInflater().inflate(R.menu.card, menu);
+//        return true;
+//    }
+//
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        // Handle action bar item clicks here. The action bar will
+//        // automatically handle clicks on the Home/Up button, so long
+//        // as you specify a parent activity in AndroidManifest.xml.
+//        int id = item.getItemId();
+//        if (id == R.id.action_settings) {
+//            return true;
+//        }
+//        return super.onOptionsItemSelected(item);
+//    }
 
     @Override
     public void onClick(View v) {
         int id = v.getId();
-        if(id == start.getId()){
+        if(id == start.getId() && !notified){
             fName = firstName.getText().toString();
             lName = lastName.getText().toString();
             pEmail = email.getText().toString();
@@ -80,7 +92,6 @@ public class CardActivity extends Activity implements OnClickListener {
 
             Intent email = new Intent(Intent.ACTION_SEND);
             email.setType("plain/text");
-            //email.putExtra(Intent.EXTRA_EMAIL, new String[]{"a@gmail.com"});
             email.putExtra(Intent.EXTRA_SUBJECT, emailSubject);
             email.putExtra(Intent.EXTRA_TEXT, messageBody);
 
@@ -91,18 +102,25 @@ public class CardActivity extends Activity implements OnClickListener {
 
             PendingIntent tIntent = PendingIntent.getActivity(this, 0, sms, PendingIntent.FLAG_UPDATE_CURRENT);
 
+            Intent clickIntent = new Intent(this, CardActivity.class);
+            PendingIntent pendingClickIntent = PendingIntent.getActivity(this, 0, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
             builder = new Notification.Builder(this).setSmallIcon(R.drawable.ic_launcher)
                     .setContentTitle("Business Card")
                     .setContentText("Send information")
                     .addAction(R.drawable.ic_action_chat, "Text", tIntent)
                     .addAction(R.drawable.ic_action_email, "Email", eIntent)
+                    .setContentIntent(pendingClickIntent)
                     .setOngoing(true);
             notification = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
             notification.notify(1, builder.build());
-        } else if(id == stop.getId()){
-            if(notification != null)
+            notified = true;
+        } else if(id == stop.getId() && notified){
+            if(notification != null) {
                 notification.cancel(1);
+                notified = false;
+            }
         }
 
     }
