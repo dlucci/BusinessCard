@@ -19,7 +19,7 @@ import butterknife.OnClick;
 
 public class CardActivity extends Activity {
 
-    @InjectViews({R.id.firstName, R.id.lastName, R.id.phoneNumber, R.id.email})
+    @InjectViews({R.id.firstName, R.id.lastName, R.id.phoneNumber, R.id.email, R.id.subject})
     List<EditText> views;
 
     @InjectViews({R.id.start, R.id.stop})
@@ -41,9 +41,6 @@ public class CardActivity extends Activity {
         ButterKnife.inject(this);
 
         setFields();
-
-        emailSubject = "We met at the conference";
-
     }
 
     private void setFields() {
@@ -51,27 +48,9 @@ public class CardActivity extends Activity {
         views.get(1).setText(lName);
         views.get(2).setText(pNumber);
         views.get(3).setText(pEmail);
+        views.get(4).setText(emailSubject);
      }
 
-
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        // Inflate the menu; this adds items to the action bar if it is present.
-//        getMenuInflater().inflate(R.menu.card, menu);
-//        return true;
-//    }
-//
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        // Handle action bar item clicks here. The action bar will
-//        // automatically handle clicks on the Home/Up button, so long
-//        // as you specify a parent activity in AndroidManifest.xml.
-//        int id = item.getItemId();
-//        if (id == R.id.action_settings) {
-//            return true;
-//        }
-//        return super.onOptionsItemSelected(item);
-//    }
 
     @OnClick({R.id.start, R.id.stop})
     public void click() {
@@ -80,6 +59,7 @@ public class CardActivity extends Activity {
             lName = views.get(1).getText().toString();
             pNumber = views.get(2).getText().toString();
             pEmail = views.get(3).getText().toString();
+            emailSubject = views.get(4).getText().toString();
 
             messageBody = "My name is " + fName + " " + lName + ".  My phone number is " + pNumber + " and my email is " + pEmail;
 
@@ -104,6 +84,7 @@ public class CardActivity extends Activity {
                     .addAction(R.drawable.ic_action_chat, "Text", tIntent)
                     .addAction(R.drawable.ic_action_email, "Email", eIntent)
                     .setContentIntent(pendingClickIntent)
+                    .setPriority(Notification.PRIORITY_MAX)
                     .setOngoing(true);
             notification = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
